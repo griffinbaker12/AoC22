@@ -30,7 +30,7 @@ console.log(solution1());
 function splitData(data) {
     const newData = [];
 
-    for (let i = 0; i < data.length; i = i + 3) {
+    for (let i = 0; i < data.length; i += 3) {
         const newSegment = [];
         let itemsPushed = 0;
         let j = i;
