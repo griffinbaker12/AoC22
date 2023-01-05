@@ -42,7 +42,19 @@ function generateStacks() {
             stacks[to].push(toMove[i])
         }
     }
+    // loop over all of the entries and pop the last value from the end of all of the keys
+    return Object.values(stacks).map(stack => stack.pop()).join("");
+}
 
+function generateStacks2() {
+    // iterate over all the moves and pop off as many blocks as you need to from the end and them move them where they need to go (use splice)
+    for (const move of movesArr) {
+        const [q, from, to] = move;
+        const toMove = stacks[from].splice(-q);
+        for (const block of toMove) {
+            stacks[to].push(block);
+        }
+    }
     // loop over all of the entries and pop the last value from the end of all of the keys
     return Object.values(stacks).map(stack => stack.pop()).join("");
 }
@@ -51,11 +63,11 @@ function solution1() {
     return generateStacks();
 }
 
-console.log(solution1());
+// console.log(solution1());
 
 
 function solution2() {
-
+    return generateStacks2();
 }
 
 console.log(solution2());
