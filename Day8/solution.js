@@ -2,14 +2,15 @@ const fs = require('fs');
 
 const data = fs.readFileSync('./input.txt', 'utf8').trim().split("\n").map(row => row.split("").map(Number));
 
+// store like "${i}-left"
+const seen = new Map();
+
 function tallerThan(dir, value, grid, i, j) {
     const rowLen = grid.length;
     const colLen = grid[0].length;
 
     // if we see a value bigger than this, then we can return false
     let largest = value;
-
-    console.log(value);
 
     // tallerThan("left", curr, data, i, j - 1) ||
     // tallerThan("right", curr, data, i, j + 1) ||
@@ -20,8 +21,12 @@ function tallerThan(dir, value, grid, i, j) {
         // if the current is bigger than largest, return false
         let currJ = j;
         while (currJ >= 0) {
-            if (grid[i][currJ] >= largest) {
-                console.log(grid[i][currJ], largest, 'FALSE');
+            if (!seen.has(`${i}-${dir}`)) {
+                seen.add(`${i}-${dir}`, grid[i][currJ]);
+            }
+
+            if (seen.get(`${i}-${dir}`) >= largest) {
+                seen.add(`${i}-${dir}`, grid[i][currJ]);
                 return false;
             }
             currJ--;
@@ -29,7 +34,11 @@ function tallerThan(dir, value, grid, i, j) {
     } else if (dir === "right") {
         let currJ = j;
         while (currJ < rowLen) {
-            if (grid[i][currJ] >= largest) {
+            if (!seen.has(`${i}-${dir}`)) {
+                seen.add(`${i}-${dir}`, grid[i][currJ]);
+            }
+
+            if (seen.get(`${i}-${dir}`) >= largest) {
                 console.log(grid[i][currJ], largest, "FALSE");
                 return false;
             }
@@ -38,7 +47,11 @@ function tallerThan(dir, value, grid, i, j) {
     } else if (dir === "top") {
         let currI = i;
         while (currI >= 0) {
-            if (grid[currI][j] >= largest) {
+            if (!seen.has(`${j}-${dir}`)) {
+                seen.add(`${j}-${dir}`, grid[currI][j]);
+            }
+
+            if (seen.get(`${j}-${dir}`) >= largest) {
                 console.log(grid[currI][j], largest, "FALSE");
                 return false;
             }
@@ -47,7 +60,11 @@ function tallerThan(dir, value, grid, i, j) {
     } else {
         let currI = i;
         while (currI < colLen) {
-            if (grid[currI][j] >= largest) {
+            if (!seen.has(`${j}-${dir}`)) {
+                seen.add(`${j}-${dir}`, grid[currI][j]);
+            }
+
+            if (seen.get(`${j}-${dir}`) >= largest) {
                 console.log(grid[currI][j], largest, "FALSE");
                 return false;
             }

@@ -1,3 +1,3 @@
-const day = 7;
+const day = 8;
 
 module.exports = { day }
