@@ -1,144 +1,54 @@
-const { readFileSync } = require("fs");
+const fs = require('fs');
 
-const lines = readFileSync("input.txt", { encoding: "utf-8" }) // read day??.txt content
-    .replace(/\r/g, "") // remove all \r characters to avoid issues on Windows
-    .trim() // Remove starting/ending whitespace
-    .split("\n"); // Split on newline
+const data = fs.readFileSync('./input.txt', 'utf8').trim().split("\n").map(x => x.split(" "));
 
-function createTree(lines) {
-    const tree = {
-        name: "/",
-        isDirectory: true,
-        children: [],
-    }; // node: name, isDirectory, size, children, parent
+function getFinalSolution(obj) {
+    let sum = 0;
+    for (const val of Object.values(obj)) {
+        if (val <= 100000) {
+            sum += val;
+        }
+    }
+    return sum;
+}
 
-    let currentNode = tree;
-    let currentCommand = null;
+function solution1() {
+    // all you have to do is keep track of the current path, and then just add whatever value that is to the object
+    const path = [];
+    const pathSums = {};
 
-    for (const line of lines) {
-        if (line[0] === "$") {
-            // command
-            const match = /^\$ (?<command>\w+)(?: (?<arg>.+))?$/.exec(line);
+    for (let i = 0; i < data.length; i++) {
+        if (data[i][1] === "ls") continue;
 
-            currentCommand = match.groups.command;
-
-            if (currentCommand === "cd") {
-                const target = match.groups.arg;
-                switch (target) {
-                    case "/":
-                        currentNode = tree;
-                        break;
-                    case "..":
-                        currentNode = currentNode.parent;
-                        break;
-                    default:
-                        currentNode = currentNode.children.find(
-                            (folder) => folder.isDirectory && folder.name === target
-                        );
-                }
-            }
-        } else {
-            if (currentCommand === "ls") {
-                // For now, it's a file/directory from a 'ls' command
-                const fileMatch = /^(?<size>\d+) (?<name>.+)$/.exec(line);
-                if (fileMatch) {
-                    const node = {
-                        name: fileMatch.groups.name,
-                        size: parseInt(fileMatch.groups.size),
-                        isDirectory: false,
-                        parent: currentNode,
-                    };
-                    currentNode.children.push(node);
-                }
-                const dirMatch = /^dir (?<name>.+)$/.exec(line);
-                if (dirMatch) {
-                    const node = {
-                        name: dirMatch.groups.name,
-                        isDirectory: true,
-                        children: [],
-                        parent: currentNode,
-                    };
-                    currentNode.children.push(node);
-                }
+        if (data[i][1] === "cd") {
+            if (data[i][2] === "..") {
+                path.pop();
             } else {
-                throw new Error("unkown state");
+                path.push(data[i][2]);
+            }
+        }
+
+        const val = parseInt(data[i][0]);
+
+        if (val) {
+            for (let i = 0; i < path.length; i++) {
+                // take the splice and then add it in
+                const _path = path.slice(0, i + 1).join("");
+                if (!pathSums[_path]) {
+                    pathSums[_path] = 0;
+                }
+                pathSums[_path] += val;
             }
         }
     }
 
-    return tree;
+    return getFinalSolution(pathSums)
 }
 
-function printTree(node, depth = 0) {
-    console.log(
-        `${" ".repeat(depth * 2)}- ${node.name} (${node.isDirectory ? "dir" : `file, size=${node.size}`
-        })`
-    );
-    if (node.isDirectory) {
-        for (const child of node.children) {
-            printTree(child, depth + 1);
-        }
-    }
+console.log(solution1());
+
+function solution2() {
+    return;
 }
 
-function getSize(node, directoryCallback = () => { }) {
-    if (!node.isDirectory) {
-        return node.size;
-    }
-    const directorySize = node.children
-        .map((child) => getSize(child, directoryCallback))
-        .reduce((a, b) => a + b, 0);
-
-    directoryCallback(node.name, directorySize);
-
-    return directorySize;
-}
-
-function part1() {
-    const thresholdSize = 100000;
-    const tree = createTree(lines);
-
-    // printTree(tree);
-
-    let sumSmallFolder = 0;
-
-    getSize(tree, (name, size) => {
-        if (size < thresholdSize) {
-            sumSmallFolder += size;
-        }
-    });
-
-    console.log(sumSmallFolder);
-}
-
-function part2() {
-    const totalDiskSpace = 70000000;
-    const requiredSpace = 30000000;
-
-    const tree = createTree(lines);
-
-    const usedSpace = getSize(tree);
-    const availableSpace = totalDiskSpace - usedSpace;
-    if (availableSpace > requiredSpace) {
-        throw new Error("There is already enough space");
-    }
-    const minimumFolderSize = requiredSpace - availableSpace;
-
-    const candidates = [];
-
-    getSize(tree, (name, size) => {
-        if (size >= minimumFolderSize) {
-            candidates.push({
-                name,
-                size,
-            });
-        }
-    });
-
-    candidates.sort((a, b) => a.size - b.size);
-
-    console.log(candidates[0].size);
-}
-
-part1();
-part2();
+console.log(solution2());
