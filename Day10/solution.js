@@ -41,6 +41,7 @@ console.log(solution1());
 
 class CRT {
     divisor = 40;
+
     constructor(boardHeight, boardWidth) {
         this.board = this.drawBoard(boardHeight, boardWidth);
     }
@@ -57,31 +58,13 @@ class CRT {
         return grid;
     }
 
-    doesOverlap(crtPosToNormalize, spriteCenter) {
-        const crtPos = crtPosToNormalize % 40;
-        if (spriteCenter === crtPos) {
-            return spriteCenter;
-        } else if (spriteCenter - 1 === crtPos) {
-            return spriteCenter - 1;
-        } else if (spriteCenter + 1 === crtPos) {
-            return spriteCenter + 1;
-        } else {
-            return false;
-        }
-    }
-
     // have some method here that takes in the current value of the pixel and then also the value of the
     // also you draw at the position
     update(crtPos, spriteCenter) {
         // see if the crtPos overlaps with the sprite
-        console.log('crtpos', crtPos, 'sprtecent', spriteCenter);
-        const overlapPos = this.doesOverlap(crtPos, spriteCenter);
-        console.log('doesOverlap', overlapPos);
-        if (typeof overlapPos === "number") {
-            // then convert that value to a board position (calculated below)
-            const row = Math.floor(crtPos / this.divisor);
-            const col = crtPos % this.divisor;
-            console.log(row, col);
+        const row = Math.floor(crtPos / this.divisor);
+        const col = crtPos % this.divisor;
+        if (Math.abs(col - spriteCenter) < 2) {
             this.board[row][col] = "#";
         }
     }
