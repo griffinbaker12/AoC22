@@ -32,14 +32,97 @@ function solution1() {
             }
         }
         registerVal += parseInt(amount);
+        // console.log(registerVal, 'rval');
     }
     return getFinalSolution(signalStrength)
 }
 
 console.log(solution1());
 
+class CRT {
+    divisor = 40;
+    constructor(boardHeight, boardWidth) {
+        this.board = this.drawBoard(boardHeight, boardWidth);
+    }
+
+    drawBoard(rowLen, colLen) {
+        const grid = [];
+        for (let i = 0; i < rowLen; i++) {
+            const row = [];
+            for (let j = 0; j < colLen; j++) {
+                row.push(".");
+            }
+            grid.push(row);
+        }
+        return grid;
+    }
+
+    doesOverlap(crtPosToNormalize, spriteCenter) {
+        const crtPos = crtPosToNormalize % 40;
+        if (spriteCenter === crtPos) {
+            return spriteCenter;
+        } else if (spriteCenter - 1 === crtPos) {
+            return spriteCenter - 1;
+        } else if (spriteCenter + 1 === crtPos) {
+            return spriteCenter + 1;
+        } else {
+            return false;
+        }
+    }
+
+    // have some method here that takes in the current value of the pixel and then also the value of the
+    // also you draw at the position
+    update(crtPos, spriteCenter) {
+        // see if the crtPos overlaps with the sprite
+        console.log('crtpos', crtPos, 'sprtecent', spriteCenter);
+        const overlapPos = this.doesOverlap(crtPos, spriteCenter);
+        console.log('doesOverlap', overlapPos);
+        if (typeof overlapPos === "number") {
+            // then convert that value to a board position (calculated below)
+            const row = Math.floor(crtPos / this.divisor);
+            const col = crtPos % this.divisor;
+            console.log(row, col);
+            this.board[row][col] = "#";
+        }
+    }
+}
+
+function printString(grid) {
+    for (const row of grid) {
+        console.log(row.join(""));
+    }
+}
+
 function solution2() {
-    return;
+    const SCREEN_HEIGHT = 6;
+    const SCREEN_WIDTH = 40;
+
+    const crtBoard = new CRT(SCREEN_HEIGHT, SCREEN_WIDTH);
+    // console.log(crtBoard.board, 'the board is');
+
+    // let's say that x is at 70, then you need to keep that as the center of the sprite, and then also track where the tube is at the time, and draw onto the board if there is overlap
+    // Math.floor(42/40) => row = 1 (good)
+    // 42 % 40 => col = 2 (good)
+
+    let cycle = 0;
+    let registerVal = 1;
+    for (const [instr, amount] of data) {
+        if (instr === "noop") {
+            // check if the cycle (the position of the crt)
+            // overlaps with the register val (the center of the sprite)
+            crtBoard.update(cycle, registerVal);
+            cycle++;
+            // console.log(registerVal);
+            continue;
+        };
+        for (let i = 0; i < 2; i++) {
+            // console.log(registerVal);
+            crtBoard.update(cycle, registerVal);
+            cycle++;
+        }
+        registerVal += parseInt(amount);
+    }
+    printString(crtBoard.board);
 }
 
 console.log(solution2());
