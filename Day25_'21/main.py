@@ -15,8 +15,6 @@ for r in range(R):
 
 taken = [[col != "." for col in row] for row in grid]
 
-# print(taken)
-
 
 def move(herd, dr, dc):
     m = [x for x in herd if not taken[(x[0] + dr) % R][(x[1] + dc) % C]]
