@@ -24,7 +24,7 @@ for line in open(0):
         for x in range(x1, x2 + 1):
             for y in range(y1, y2 + 1):
                 b.add(f'{x}-{y}')
-                abyss = max(abyss, y + 1)
+                abyss = max(abyss, y)
 
 t = 0
 hitAbyss = False
@@ -49,4 +49,27 @@ while not hitAbyss:
         t += 1
         b.add(f'{x}-{y}')
         break
+print(t)
+
+t = 0
+while '500-0' not in b:
+    x = 500
+    y = 0
+    while True:
+        if y >= abyss:
+            break
+        if f'{x}-{y+1}' not in b:
+            y += 1
+            continue
+        if f'{x-1}-{y+1}' not in b:
+            x -= 1
+            y += 1
+            continue
+        if f'{x+1}-{y+1}' not in b:
+            x += 1
+            y += 1
+            continue
+        break
+    t += 1
+    b.add(f'{x}-{y}')
 print(t)
