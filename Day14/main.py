@@ -57,6 +57,7 @@ while '500-0' not in b:
     y = 0
     while True:
         if y >= abyss:
+            # can't fall any further (abyss already represents the last level that an element can get to since the infinite floor is beneath)
             break
         if f'{x}-{y+1}' not in b:
             y += 1
