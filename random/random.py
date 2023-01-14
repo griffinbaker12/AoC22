@@ -1,3 +1,4 @@
+import re
 data = "[A] [C] [D]"
 
 # get the letters out of them
@@ -25,3 +26,8 @@ print(a[::-2])
 
 a = [1, 2]
 print(sum(a))
+
+print(list(map(int, re.findall(r"\d+", '1 3 5'))))
+
+# [5,7]
+# [9,8]
