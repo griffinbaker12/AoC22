@@ -39,13 +39,8 @@ for s1, s2, b1, b2 in lines:
         minX = smallerX
     if (largerX > maxX):
         maxX = largerX
-
-print(abs(minX) + abs(maxX))
-
-
-# the x and y both canot be lower than 0 and no greater than 4M
-# tf = 4M * y
 M = 4000000
+
 
 for Y in range(M + 1):
     intervals = []
